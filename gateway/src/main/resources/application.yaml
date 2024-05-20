@@ -1,0 +1,66 @@
+server:
+  port: 8765
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://auth
+          predicates:
+            - Path=/auth/**,/api-docs/**
+          filters:
+            - RewritePath=/auth(?<segment>/?.*), $\{segment}
+            - TokenPreFilter
+        - id: user-service
+          uri: lb://user
+          predicates:
+            - Path=/user/**,/api-docs/**
+          filters:
+            - RewritePath=/user(?<segment>/?.*), $\{segment}
+            - TokenPreFilter
+        - id: playlist-service
+          uri: lb://playlist
+          predicates:
+            - Path=/playlist/**,/api-docs/**
+          filters:
+            - RewritePath=/playlist(?<segment>/?.*), $\{segment}
+            - TokenPreFilter
+        - id: tracks-service
+          uri: lb://track
+          predicates:
+            - Path=/track/**,/api-docs/**
+          filters:
+            - RewritePath=/track(?<segment>/?.*), $\{segment}
+            - TokenPreFilter
+        - id: yandex-music-service
+          uri: lb://yandex-music
+          predicates:
+            - Path=/yandex-music/**,/api-docs/**
+          filters:
+            - RewritePath=/yandex-music(?<segment>/?.*), $\{segment}
+            - TokenPreFilter
+    config:
+      enabled: false
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    reactor.netty: DEBUG
+
+#springdoc:
+#  swagger-ui:
+#    urls:
+#      - url: /user/api-docs
+#        name: "User service"
+#      - url: /hotel/api-docs
+#        name: "Hotel service"
+#      - url: /wallet/api-docs
+#        name: "Wallet service"
+#      - url: /security/api-docs
+#        name: "Security service"
